@@ -1,29 +1,59 @@
-export default function SignupPage() {
-  return (
-    <main className="container flex min-h-screen items-center justify-center py-12">
-      <div className="card w-full max-w-md p-8 shadow-soft">
-        <p className="text-sm text-muted">Create account</p>
-        <h1 className="mt-2 text-3xl font-semibold">Start with sohiltrader</h1>
+"use client";
 
-        <form className="mt-8 space-y-4">
-          <input
-            className="w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none"
-            placeholder="Full Name"
-          />
-          <input
-            className="w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none"
-            placeholder="Email"
-          />
-          <input
-            className="w-full rounded-2xl border border-border bg-transparent px-4 py-3 outline-none"
-            type="password"
-            placeholder="Password"
-          />
-          <button className="w-full rounded-2xl bg-primary px-4 py-3 font-medium text-white">
-            Create Account
-          </button>
-        </form>
-      </div>
-    </main>
+import { useState } from "react";
+import { signup } from "../../lib/api";
+
+export default function SignupPage() {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const data = await signup(fullName, email, password);
+      alert("Signup successful!");
+      // Signup ke baad login page pe ja
+      window.location.href = "/login";
+    } catch (err: any) {
+      setError(err.message || "Signup failed");
+    }
+  }
+
+  return (
+    <div style={{ maxWidth: 320, margin: "40px auto", textAlign: "center" }}>
+      <h2>Signup</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input
+          placeholder="Full name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          style={{ width: "100%", padding: 8, marginBottom: 8 }}
+        />
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ width: "100%", padding: 8, marginBottom: 8 }}
+        />
+        <input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", padding: 8, marginBottom: 8 }}
+        />
+        <button type="submit" style={{ width: "100%", padding: 8 }}>
+          Create Account
+        </button>
+      </form>
+      <p style={{ marginTop: 12 }}>
+        <a href="/login">Login here</a>
+      </p>
+    </div>
   );
 }
