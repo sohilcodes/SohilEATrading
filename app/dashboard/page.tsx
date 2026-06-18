@@ -9,7 +9,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const token = getAccessToken();
-    if (!token) {
+    const userId = localStorage.getItem("user_id");
+
+    if (!token || !userId) {
       setError("Please login first");
       setTimeout(() => window.location.href = "/login", 2000);
       return;
@@ -18,13 +20,13 @@ export default function DashboardPage() {
     (async () => {
       try {
         const res = await fetchWithAuth(
-          "https://eatradingsohil.onrender.com/api/profile/me"
+          `https://eatradingsohil.onrender.com/api/profile/${userId}`
         );
         if (!res.ok) {
           throw new Error("Unauthorized");
         }
         const data = await res.json();
-        setUser(data.user);
+        setUser(data);
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
       }
@@ -32,7 +34,18 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div style={{ maxWidth: 400, margin: "40px auto", textAlign: "center" }}>
+    <div
+      style={{
+        maxWidth: 400,
+        margin: "40px auto",
+        textAlign: "center",
+        fontFamily: "Arial, sans-serif",
+        color: "#e5e7eb",
+        background: "#0f172a",
+        padding: 20,
+        borderRadius: 8,
+      }}
+    >
       <h2>Dashboard</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {user ? (
@@ -44,6 +57,7 @@ export default function DashboardPage() {
         onClick={() => {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
+          localStorage.removeItem("user_id");
           window.location.href = "/login";
         }}
       >
