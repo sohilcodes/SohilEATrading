@@ -1,7 +1,7 @@
 const API_BASE_URL = "https://eatradingsohil.onrender.com/api";
 
 export async function signup(fullName: string, email: string, password: string) {
-  const res = await fetch(`${API_BASE_URL}/auth/signup`, {
+  const res = await fetch(API_BASE_URL + "/auth/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -20,7 +20,7 @@ export async function signup(fullName: string, email: string, password: string) 
 }
 
 export async function login(email: string, password: string) {
-  const res = await fetch(`${API_BASE_URL}/auth/login`, {
+  const res = await fetch(API_BASE_URL + "/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -31,11 +31,11 @@ export async function login(email: string, password: string) {
     throw new Error(data.detail || "Login failed");
   }
 
-  // Tokens local me store kar
   localStorage.setItem("access_token", data.access_token);
   localStorage.setItem("refresh_token", data.refresh_token);
+  localStorage.setItem("user_id", data.user.id); // <-- ye line add kar
 
-  return data; // { message, access_token, refresh_token, user }
+  return data;
 }
 
 export function getAccessToken() {
